@@ -31,7 +31,7 @@ description = "A stacking game made in FastJ."
 
 /* Here, we specify where the main entrypoint of the project.
  * Feel free to change this as needed. */
-application.mainClass.set("tech.fastj.stackattack.MainGameKt")
+application.mainClass.set("tech.fastj.stackattack.StackAttackKt")
 
 
 /* When you add a dependency on another project (like FastJ), you need to add specify where the
@@ -43,7 +43,7 @@ repositories.maven {
 repositories.mavenCentral()
 
 /* The dependency for FastJ, the game engine this template depends on. */
-dependencies.implementation("com.github.fastjengine:FastJ:e31e0a9f9e")
+dependencies.implementation("com.github.lucasstarsz:FastJ:e01385dfd9")
 /* We'll stick with the simplest logging option for now -- you can change it however you need. */
 dependencies.implementation("org.slf4j:slf4j-simple:2.0.0-alpha7")
 
