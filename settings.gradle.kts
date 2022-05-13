@@ -1,2 +1,2 @@
-rootProject.name = "FastJ Kotlin Template"
+rootProject.name = "Stack Attack"
 include(":")

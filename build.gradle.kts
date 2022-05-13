@@ -17,7 +17,7 @@ plugins {
 /* Your project's group name goes here.
  * This should be a domain name you own.
  * If you don't own a domain, don"t worry! You can always set this to "io.github.yourgithubusername". */
-group = "io.github.yourgithubusername"
+group = "tech.fastj"
 
 /* Your project's version.
  * When you want to distribute a new version of your project, always make sure to update the
@@ -27,11 +27,11 @@ version = "0.0.1"
 /* Your project's description.
  * Give a one or two sentence description of your project -- if you publish it somewhere, you"ll be
  * able to use it. */
-description = "A Kotlin Template for FastJ."
+description = "A stacking game made in FastJ."
 
 /* Here, we specify where the main entrypoint of the project.
  * Feel free to change this as needed. */
-application.mainClass.set("tech.fastj.template.GameKt")
+application.mainClass.set("tech.fastj.stackattack.MainGameKt")
 
 
 /* When you add a dependency on another project (like FastJ), you need to add specify where the
@@ -43,9 +43,9 @@ repositories.maven {
 repositories.mavenCentral()
 
 /* The dependency for FastJ, the game engine this template depends on. */
-dependencies.implementation("com.github.fastjengine:FastJ:1.6.0")
+dependencies.implementation("com.github.fastjengine:FastJ:e31e0a9f9e")
 /* We'll stick with the simplest logging option for now -- you can change it however you need. */
-dependencies.implementation("org.slf4j:slf4j-simple:2.0.0-alpha5")
+dependencies.implementation("org.slf4j:slf4j-simple:2.0.0-alpha7")
 
 /* To make Kotlin compile and run properly with Gradle, this adds your Kotlin code to the Java
  * source sets. */
