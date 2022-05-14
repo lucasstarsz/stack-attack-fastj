@@ -2,10 +2,17 @@ package tech.fastj.stackattack
 
 import tech.fastj.engine.FastJEngine
 import tech.fastj.logging.LogLevel
+import tech.fastj.math.Point
 
 fun main() {
     FastJEngine.init("FastJ Kotlin Template", GameManager())
+    FastJEngine.configureCanvasResolution(Point(800, 600))
+    FastJEngine.configureWindowResolution(Point(800, 600))
     FastJEngine.setTargetUPS(1)
     FastJEngine.configureLogging(LogLevel.Debug)
-    FastJEngine.run()
+    try {
+        FastJEngine.run()
+    } catch (exception: Exception) {
+        exception.printStackTrace()
+    }
 }

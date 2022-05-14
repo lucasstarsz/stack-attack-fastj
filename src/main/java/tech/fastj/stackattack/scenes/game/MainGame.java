@@ -2,10 +2,13 @@ package tech.fastj.stackattack.scenes.game;
 
 import tech.fastj.engine.FastJEngine;
 import tech.fastj.logging.Log;
+import tech.fastj.math.Pointf;
 import tech.fastj.math.Transform2D;
+import tech.fastj.graphics.Boundary;
 import tech.fastj.graphics.display.FastJCanvas;
 import tech.fastj.graphics.game.Polygon2D;
 import tech.fastj.graphics.game.Sprite2D;
+import tech.fastj.graphics.util.DrawUtil;
 
 import tech.fastj.systems.collections.Pair;
 import tech.fastj.systems.control.Scene;
@@ -29,6 +32,7 @@ public class MainGame extends Scene {
     private Sprite2D introAnimation;
 
     private List<Polygon2D> blocks;
+    private Polygon2D base;
 
     public MainGame() {
         super(SceneNames.Game);
@@ -36,7 +40,7 @@ public class MainGame extends Scene {
 
     public Pair<Float, Float> getEdgesOfStack() {
         Polygon2D lastDormantBlock = blocks.get(blocks.size() - 2);
-        return Pair.of(lastDormantBlock.getTranslation().x, lastDormantBlock.width() + lastDormantBlock.getTranslation().x);
+        return Pair.of(lastDormantBlock.getBound(Boundary.TopLeft).x, lastDormantBlock.getBound(Boundary.TopRight).x);
     }
 
     @Override
@@ -51,10 +55,23 @@ public class MainGame extends Scene {
         Log.debug(MainGame.class, "unloading {}", getSceneName());
         gameState = null;
         introFlipObserver = null;
+
         if (introAnimation != null) {
             introAnimation.destroy(this);
             introAnimation = null;
         }
+
+        if (base != null) {
+            base.destroy(this);
+            base = null;
+        }
+
+        for (Polygon2D block : blocks) {
+            block.destroy(this);
+        }
+        blocks.clear();
+        blocks = null;
+
         setInitialized(false);
         Log.debug(MainGame.class, "unloaded {}", getSceneName());
     }
@@ -90,7 +107,9 @@ public class MainGame extends Scene {
             }
             case Playing -> {
                 blocks = new ArrayList<>();
-                nextBlock();
+                base = Shapes.generateGround();
+                drawableManager.addGameObject(base);
+                nextBlock(new Pointf(100f, 30f));
             }
             case Paused -> {
             }
@@ -100,10 +119,10 @@ public class MainGame extends Scene {
         gameState = next;
     }
 
-    private void nextBlock() {
+    private void nextBlock(Pointf size) {
         Log.debug(MainGame.class, "next block");
 
-        Polygon2D block = Shapes.generateBlock();
+        Polygon2D block = Shapes.generateBlock(size);
         StackMovement blockMovement = new StackMovement(this);
         block.addLateBehavior(blockMovement, this);
         drawableManager.addGameObject(block);
@@ -115,6 +134,7 @@ public class MainGame extends Scene {
     private void tryRemoveOldestBlock() {
         if (blocks.get(0).getTranslation().y > FastJEngine.getCanvas().getResolution().y) {
             Polygon2D removed = blocks.remove(0);
+            Log.debug(MainGame.class, "Removing {}", removed);
             removed.setShouldRender(false);
             FastJEngine.runAfterRender(() -> removed.destroy(this));
         }
@@ -124,5 +144,59 @@ public class MainGame extends Scene {
         introFlipObserver = null;
         introAnimation.destroy(this);
         introAnimation = null;
+    }
+
+    public void calculateBlockPoints() {
+        Pair<Float, Float> edgesOfStack;
+        if (blocks.size() > 1) {
+            edgesOfStack = getEdgesOfStack();
+        } else {
+            edgesOfStack = Pair.of(base.getTranslation().x, base.getTranslation().x + base.width());
+        }
+
+        Polygon2D lastBlock = blocks.get(blocks.size() - 1);
+        Pair<Float, Float> lastBlockPositions = Pair.of(
+                lastBlock.getTranslation().x,
+                lastBlock.getTranslation().x + lastBlock.width()
+        );
+
+        if (lastBlockPositions.getRight() < edgesOfStack.getLeft() || lastBlockPositions.getLeft() > edgesOfStack.getRight()) {
+            Log.debug(MainGame.class, "You lose");
+            // TODO: lose
+        } else {
+            if (lastBlockPositions.getRight() < edgesOfStack.getRight()) {
+                Pointf newPosition = new Pointf(edgesOfStack.getLeft(), lastBlock.getBound(Boundary.TopLeft).y);
+                Pointf newSize = new Pointf(lastBlock.getBound(Boundary.TopRight).x - edgesOfStack.getLeft(), lastBlock.height());
+                Pointf[] newMesh = DrawUtil.createBox(newPosition, newSize);
+                lastBlock.modifyPoints(newMesh, true, false, false);
+                Shapes.removePersonality(lastBlock);
+
+                shiftBlocksDown();
+                nextBlock(newSize);
+            } else if (lastBlockPositions.getLeft() > edgesOfStack.getLeft()) {
+                Pointf newPosition = lastBlock.getBound(Boundary.TopLeft);
+                Pointf newSize = new Pointf(edgesOfStack.getRight() - lastBlock.getBound(Boundary.TopLeft).x, lastBlock.height());
+                Pointf[] newMesh = DrawUtil.createBox(newPosition, newSize);
+                lastBlock.modifyPoints(newMesh, true, false, false);
+                Shapes.removePersonality(lastBlock);
+
+                shiftBlocksDown();
+                nextBlock(newSize);
+            } else {
+                Log.info(MainGame.class, "Perfect?");
+                Shapes.removePersonality(lastBlock);
+
+                shiftBlocksDown();
+                nextBlock(new Pointf(lastBlock.width(), lastBlock.height()));
+            }
+        }
+    }
+
+    private void shiftBlocksDown() {
+        Pointf translation = new Pointf(0f, 34f);
+        base.translate(translation);
+        for (Polygon2D block : blocks) {
+            block.translate(translation);
+        }
     }
 }

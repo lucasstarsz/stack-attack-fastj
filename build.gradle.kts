@@ -43,7 +43,7 @@ repositories.maven {
 repositories.mavenCentral()
 
 /* The dependency for FastJ, the game engine this template depends on. */
-dependencies.implementation("com.github.lucasstarsz:FastJ:ca12866e8b")
+dependencies.implementation("com.github.lucasstarsz:FastJ:a364e84b03")
 /* We'll stick with the simplest logging option for now -- you can change it however you need. */
 dependencies.implementation("org.slf4j:slf4j-simple:2.0.0-alpha7")
 
