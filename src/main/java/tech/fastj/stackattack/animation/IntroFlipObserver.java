@@ -15,7 +15,7 @@ public record IntroFlipObserver(MainGame game) implements GameEventObserver<Anim
     @Override
     public void eventReceived(AnimationFlipEvent event) {
         if (event.getNewFrame() == TriggerGoFrame) {
-            game.changeState(GameState.Intro.nextState());
+            game.changeState(GameState.Playing);
         }
         if (event.getNewFrame() == event.getAnimationData().getLastFrame()) {
             FastJEngine.runAfterRender(game::introEnded);

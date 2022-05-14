@@ -47,6 +47,8 @@ public class MainGame extends Scene {
     private PauseMenu pauseMenu;
     private KeyboardActionListener pauseListener;
 
+    private ResultMenu resultMenu;
+
     public MainGame() {
         super(SceneNames.Game);
     }
@@ -109,6 +111,11 @@ public class MainGame extends Scene {
             pauseListener = null;
         }
 
+        if (resultMenu != null) {
+            resultMenu.destroy(this);
+            resultMenu = null;
+        }
+
         setInitialized(false);
         Log.debug(MainGame.class, "unloaded {}", getSceneName());
     }
@@ -125,6 +132,26 @@ public class MainGame extends Scene {
         Log.debug(MainGame.class, "changing state from {} to {}", gameState, next);
         switch (next) {
             case Intro -> {
+                if (gameState == GameState.Results) {
+                    for (Polygon2D block : blocks) {
+                        block.destroy(this);
+                    }
+                    blocks.clear();
+                    blocks = null;
+
+                    base.destroy(this);
+                    base = null;
+
+                    scoreBox.destroy(this);
+                    scoreBox = null;
+
+                    user.resetScore();
+                    user = null;
+
+                    resultMenu.destroy(this);
+                    resultMenu = null;
+                }
+
                 FastJCanvas canvas = FastJEngine.getCanvas();
 
                 introFlipObserver = new IntroFlipObserver(this);
@@ -197,8 +224,7 @@ public class MainGame extends Scene {
                 pauseMenu.setShouldRender(true);
                 inputManager.removeKeyboardActionListener(pauseListener);
             }
-            case Results -> {
-            }
+            case Results -> resultMenu = new ResultMenu(this, user.getScore());
         }
         gameState = next;
     }
@@ -222,11 +248,13 @@ public class MainGame extends Scene {
     }
 
     private void tryRemoveOldestBlock() {
-        if (blocks.get(0).getTranslation().y > FastJEngine.getCanvas().getResolution().y) {
+        Log.debug(MainGame.class, "thinking about removing things...");
+        Log.debug(MainGame.class, "{} {}", blocks.get(0).getBound(Boundary.TopLeft).y, FastJEngine.getCanvas().getResolution().y);
+        if (blocks.get(0).getBound(Boundary.TopLeft).y > FastJEngine.getCanvas().getResolution().y) {
             Polygon2D removed = blocks.remove(0);
             Log.debug(MainGame.class, "Removing {}", removed);
             removed.setShouldRender(false);
-            FastJEngine.runAfterRender(() -> removed.destroy(this));
+            FastJEngine.runAfterUpdate(() -> removed.destroy(this));
         }
     }
 
@@ -253,7 +281,7 @@ public class MainGame extends Scene {
 
         if (lastBlockPositions.getRight() < edgesOfStack.getLeft() || lastBlockPositions.getLeft() > edgesOfStack.getRight()) {
             Log.debug(MainGame.class, "You lose");
-            // TODO: lose
+            FastJEngine.runAfterUpdate(() -> changeState(GameState.Results));
         } else {
             if (lastBlockPositions.getRight() < edgesOfStack.getRight()) {
                 Pointf newPosition = new Pointf(edgesOfStack.getLeft(), lastBlock.getBound(Boundary.TopLeft).y);

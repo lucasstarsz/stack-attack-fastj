@@ -43,7 +43,7 @@ public class PauseMenu extends UIElement<MouseActionEvent> {
         setCollisionPath(DrawUtil.createPath(backgroundMesh));
 
         backgroundScreen = Polygon2D.create(backgroundMesh)
-                .withFill(Color.lightGray)
+                .withFill(new Color(Color.lightGray.getRed(), Color.lightGray.getGreen(), Color.lightGray.getBlue(), 100))
                 .withOutline(Shapes.ThickerRoundedStroke, Color.black)
                 .withRenderStyle(RenderStyle.FillAndOutline)
                 .build();
