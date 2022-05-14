@@ -10,6 +10,9 @@ import tech.fastj.graphics.game.Polygon2D;
 import tech.fastj.graphics.game.Sprite2D;
 import tech.fastj.graphics.util.DrawUtil;
 
+import tech.fastj.input.keyboard.KeyboardActionListener;
+import tech.fastj.input.keyboard.Keys;
+import tech.fastj.input.keyboard.events.KeyboardStateEvent;
 import tech.fastj.systems.collections.Pair;
 import tech.fastj.systems.control.Scene;
 
@@ -18,21 +21,31 @@ import java.util.List;
 
 import tech.fastj.animation.AnimationStyle;
 import tech.fastj.animation.sprite.SpriteAnimationData;
+import tech.fastj.animation.sprite.event.AnimationFlipEvent;
 import tech.fastj.stackattack.animation.IntroFlipObserver;
 import tech.fastj.stackattack.scripts.StackMovement;
+import tech.fastj.stackattack.ui.ContentBox;
+import tech.fastj.stackattack.user.User;
+import tech.fastj.stackattack.user.UserKt;
 import tech.fastj.stackattack.util.FilePaths;
+import tech.fastj.stackattack.util.Fonts;
 import tech.fastj.stackattack.util.SceneNames;
 import tech.fastj.stackattack.util.Shapes;
 
 public class MainGame extends Scene {
 
     private GameState gameState;
+    private User user;
 
     private IntroFlipObserver introFlipObserver;
     private Sprite2D introAnimation;
 
     private List<Polygon2D> blocks;
     private Polygon2D base;
+    private ContentBox scoreBox;
+
+    private PauseMenu pauseMenu;
+    private KeyboardActionListener pauseListener;
 
     public MainGame() {
         super(SceneNames.Game);
@@ -41,6 +54,10 @@ public class MainGame extends Scene {
     public Pair<Float, Float> getEdgesOfStack() {
         Polygon2D lastDormantBlock = blocks.get(blocks.size() - 2);
         return Pair.of(lastDormantBlock.getBound(Boundary.TopLeft).x, lastDormantBlock.getBound(Boundary.TopRight).x);
+    }
+
+    public GameState getGameState() {
+        return gameState;
     }
 
     @Override
@@ -56,9 +73,19 @@ public class MainGame extends Scene {
         gameState = null;
         introFlipObserver = null;
 
+        if (user != null) {
+            user.resetScore();
+            user = null;
+        }
+
         if (introAnimation != null) {
             introAnimation.destroy(this);
             introAnimation = null;
+        }
+
+        if (scoreBox != null) {
+            scoreBox.destroy(this);
+            scoreBox = null;
         }
 
         if (base != null) {
@@ -71,6 +98,16 @@ public class MainGame extends Scene {
         }
         blocks.clear();
         blocks = null;
+
+        if (pauseMenu != null) {
+            pauseMenu.destroy(this);
+            pauseMenu = null;
+        }
+
+        if (pauseListener != null) {
+            inputManager.removeKeyboardActionListener(pauseListener);
+            pauseListener = null;
+        }
 
         setInitialized(false);
         Log.debug(MainGame.class, "unloaded {}", getSceneName());
@@ -89,7 +126,10 @@ public class MainGame extends Scene {
         switch (next) {
             case Intro -> {
                 FastJCanvas canvas = FastJEngine.getCanvas();
+
                 introFlipObserver = new IntroFlipObserver(this);
+                FastJEngine.getGameLoop().addEventObserver(introFlipObserver, AnimationFlipEvent.class);
+
                 introAnimation = Sprite2D.create(FilePaths.IntroAnimation)
                         .withTransform(canvas.getCanvasCenter().subtract(100f), Transform2D.DefaultRotation, Transform2D.DefaultScale)
                         .withImageCount(4, 4)
@@ -106,12 +146,56 @@ public class MainGame extends Scene {
                 drawableManager.addGameObject(introAnimation);
             }
             case Playing -> {
-                blocks = new ArrayList<>();
-                base = Shapes.generateGround();
-                drawableManager.addGameObject(base);
-                nextBlock(new Pointf(100f, 30f));
+                if (gameState == GameState.Intro) {
+                    user = UserKt.getInstance();
+
+                    scoreBox = new ContentBox(this, "Score", "" + user.getScore());
+                    scoreBox.setTranslation(new Pointf(30f));
+                    scoreBox.getStatDisplay().setFont(Fonts.MonoStatTextFont);
+                    drawableManager.addUIElement(scoreBox);
+
+                    blocks = new ArrayList<>();
+
+                    base = Shapes.generateGround();
+                    drawableManager.addGameObject(base);
+                    nextBlock(new Pointf(100f, 30f));
+
+                    pauseListener = new KeyboardActionListener() {
+                        @Override
+                        public void onKeyReleased(KeyboardStateEvent event) {
+                            if (event.isConsumed() || gameState != GameState.Playing) {
+                                return;
+                            }
+
+                            if (event.getKey() == Keys.P || event.getKey() == Keys.Escape) {
+                                event.consume();
+                                FastJEngine.runAfterUpdate(() -> changeState(GameState.Paused));
+                            }
+                        }
+                    };
+
+                } else if (gameState == GameState.Paused) {
+                    pauseMenu.setShouldRender(false);
+
+                    if (introAnimation != null) {
+                        introAnimation.setPaused(true);
+                    }
+                }
+
+                inputManager.addKeyboardActionListener(pauseListener);
             }
             case Paused -> {
+                if (pauseMenu == null) {
+                    pauseMenu = new PauseMenu(this);
+                    drawableManager.addUIElement(pauseMenu);
+                }
+
+                if (introAnimation != null) {
+                    introAnimation.setPaused(true);
+                }
+
+                pauseMenu.setShouldRender(true);
+                inputManager.removeKeyboardActionListener(pauseListener);
             }
             case Results -> {
             }
@@ -123,7 +207,13 @@ public class MainGame extends Scene {
         Log.debug(MainGame.class, "next block");
 
         Polygon2D block = Shapes.generateBlock(size);
-        StackMovement blockMovement = new StackMovement(this);
+        StackMovement blockMovement;
+        if (blocks.size() > 1) {
+            Pair<Float, Float> stackEdges = getEdgesOfStack();
+            blockMovement = new StackMovement(this, stackEdges.getLeft(), stackEdges.getRight());
+        } else {
+            blockMovement = new StackMovement(this, base.getBound(Boundary.TopLeft).x, base.getBound(Boundary.TopRight).x);
+        }
         block.addLateBehavior(blockMovement, this);
         drawableManager.addGameObject(block);
         blocks.add(block);
@@ -141,6 +231,7 @@ public class MainGame extends Scene {
     }
 
     public void introEnded() {
+        FastJEngine.getGameLoop().removeEventObserver(introFlipObserver, AnimationFlipEvent.class);
         introFlipObserver = null;
         introAnimation.destroy(this);
         introAnimation = null;
@@ -189,6 +280,9 @@ public class MainGame extends Scene {
                 shiftBlocksDown();
                 nextBlock(new Pointf(lastBlock.width(), lastBlock.height()));
             }
+
+            user.addToScore(Math.round(100f * lastBlock.width() / (lastBlockPositions.getRight() - lastBlockPositions.getLeft())));
+            scoreBox.setContent("" + user.getScore());
         }
     }
 

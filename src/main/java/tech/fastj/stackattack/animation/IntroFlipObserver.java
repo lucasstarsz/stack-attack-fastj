@@ -12,21 +12,13 @@ public record IntroFlipObserver(MainGame game) implements GameEventObserver<Anim
 
     private static final int TriggerGoFrame = 12;
 
-    public IntroFlipObserver(MainGame game) {
-        this.game = game;
-        FastJEngine.getGameLoop().addEventObserver(this, AnimationFlipEvent.class);
-    }
-
     @Override
     public void eventReceived(AnimationFlipEvent event) {
         if (event.getNewFrame() == TriggerGoFrame) {
             game.changeState(GameState.Intro.nextState());
         }
         if (event.getNewFrame() == event.getAnimationData().getLastFrame()) {
-            FastJEngine.runAfterRender(() -> {
-                FastJEngine.getGameLoop().removeEventObserver(this, AnimationFlipEvent.class);
-                game.introEnded();
-            });
+            FastJEngine.runAfterRender(game::introEnded);
         }
     }
 }

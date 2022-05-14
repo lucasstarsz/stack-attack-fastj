@@ -19,8 +19,9 @@ public class Shapes {
         return DrawUtil.createBox(Pointf.origin(), size);
     }
 
-    private static final BasicStroke ThickStroke = new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-    private static final BasicStroke ThickEdgedStroke = new BasicStroke(4, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
+    public static final BasicStroke ThickStroke = new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+    public static final BasicStroke ThickerRoundedStroke = new BasicStroke(8, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+    public static final BasicStroke ThickEdgedStroke = new BasicStroke(4, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
 
     private static final int GroundWidth = 100;
     private static final int GroundHeight = 200;
