@@ -2,6 +2,8 @@ package tech.fastj.stackattack.animation;
 
 import tech.fastj.engine.FastJEngine;
 
+import tech.fastj.logging.Log;
+
 import tech.fastj.stackattack.scenes.game.GameState;
 import tech.fastj.stackattack.scenes.game.MainGame;
 import tech.fastj.animation.sprite.event.AnimationFlipEvent;
@@ -19,6 +21,7 @@ public record IntroFlipObserver(MainGame game) implements GameEventObserver<Anim
 
     @Override
     public void eventReceived(AnimationFlipEvent event) {
+        Log.debug(IntroFlipObserver.class, "{} {}", FastJEngine.getDeltaTime(), FastJEngine.getFixedDeltaTime());
         if (event.getNewFrame() == TriggerGoFrame) {
             game.changeState(GameState.Intro.nextState());
         }
