@@ -25,8 +25,6 @@ import tech.fastj.stackattack.util.Shapes;
 
 public class PauseMenu extends UIElement<MouseActionEvent> {
 
-    private static final Pointf ButtonSize = new Pointf(200f, 50f);
-
     private final MainGame origin;
     private Polygon2D backgroundScreen;
     private Text2D pausedText;
@@ -53,7 +51,7 @@ public class PauseMenu extends UIElement<MouseActionEvent> {
                 .withTransform(Pointf.subtract(center, 100f), Transform2D.DefaultRotation, Transform2D.DefaultScale)
                 .build();
 
-        settingsButton = new Button(origin, backgroundScreen.getCenter().subtract(100f, 0f), ButtonSize);
+        settingsButton = new Button(origin, backgroundScreen.getCenter().subtract(100f, 0f), Shapes.ButtonSize);
         settingsButton.setText("Open Settings");
         settingsButton.setFill(Color.white);
         settingsButton.setFont(Fonts.ButtonTextFont);
@@ -62,7 +60,7 @@ public class PauseMenu extends UIElement<MouseActionEvent> {
             FastJEngine.log("TODO: settings");
         });
 
-        resumeButton = new Button(origin, backgroundScreen.getCenter().add(-100f, 100f), ButtonSize);
+        resumeButton = new Button(origin, backgroundScreen.getCenter().add(-100f, 100f), Shapes.ButtonSize);
         resumeButton.setText("Resume Game");
         resumeButton.setFill(Color.white);
         resumeButton.setFont(Fonts.ButtonTextFont);

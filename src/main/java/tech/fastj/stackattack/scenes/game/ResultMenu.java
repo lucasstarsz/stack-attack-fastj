@@ -25,8 +25,6 @@ import tech.fastj.stackattack.util.Shapes;
 
 public class ResultMenu extends UIElement<MouseActionEvent> {
 
-    private static final Pointf ButtonSize = new Pointf(200f, 50f);
-
     private Polygon2D backgroundScreen;
     private Text2D gameEndText;
     private ContentBox scoreBox;
@@ -57,7 +55,7 @@ public class ResultMenu extends UIElement<MouseActionEvent> {
         scoreBox.getStatDisplay().setFont(Fonts.StatTextFont);
         scoreBox.translate(Pointf.subtract(center, 65f, 80f));
 
-        playAgainButton = new Button(origin, backgroundScreen.getCenter().add(-100f, 100f), ButtonSize);
+        playAgainButton = new Button(origin, backgroundScreen.getCenter().add(-100f, 100f), Shapes.ButtonSize);
         playAgainButton.setText("Play Again");
         playAgainButton.setFill(Color.white);
         playAgainButton.setFont(Fonts.ButtonTextFont);
@@ -66,7 +64,7 @@ public class ResultMenu extends UIElement<MouseActionEvent> {
             FastJEngine.runAfterRender(() -> origin.changeState(GameState.Intro));
         });
 
-        mainMenuButton = new Button(origin, backgroundScreen.getCenter().subtract(100f, 0f), ButtonSize);
+        mainMenuButton = new Button(origin, backgroundScreen.getCenter().subtract(100f, 0f), Shapes.ButtonSize);
         mainMenuButton.setText("Quit Game");
         mainMenuButton.setFill(Color.white);
         mainMenuButton.setFont(Fonts.ButtonTextFont);

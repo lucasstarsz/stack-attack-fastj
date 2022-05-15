@@ -23,6 +23,8 @@ public class Shapes {
     public static final BasicStroke ThickerRoundedStroke = new BasicStroke(8, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
     public static final BasicStroke ThickEdgedStroke = new BasicStroke(4, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
 
+    public static final Pointf ButtonSize = new Pointf(200f, 50f);
+
     private static final int GroundWidth = 100;
     private static final int GroundHeight = 200;
 
