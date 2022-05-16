@@ -34,6 +34,8 @@ import tech.fastj.stackattack.util.Shapes;
 
 public class MainGame extends Scene {
 
+    private static final float PerfectBlockPrecision = 0.05f;
+
     private GameState gameState;
     private User user;
 
@@ -326,33 +328,35 @@ public class MainGame extends Scene {
             Log.debug(MainGame.class, "You lose");
             FastJEngine.runAfterUpdate(() -> changeState(GameState.Results));
         } else {
-            if (lastBlockPositions.getRight() < edgesOfStack.getRight()) {
-                Pointf newPosition = new Pointf(edgesOfStack.getLeft(), lastBlock.getBound(Boundary.TopLeft).y);
+            if (edgesOfStack.getRight() - lastBlockPositions.getRight() > PerfectBlockPrecision) {
                 Pointf newSize = new Pointf(lastBlock.getBound(Boundary.TopRight).x - edgesOfStack.getLeft(), lastBlock.height());
-                Pointf[] newMesh = DrawUtil.createBox(newPosition, newSize);
-                lastBlock.modifyPoints(newMesh, true, false, false);
-                Shapes.removePersonality(lastBlock);
+                Pointf originalTopLeft = new Pointf(Math.abs(edgesOfStack.getLeft() - lastBlock.getTranslation().x), lastBlock.getOriginalPoints()[0].y);
+                Pointf[] newMesh = DrawUtil.createBox(originalTopLeft, newSize);
+                lastBlock.modifyPoints(newMesh, false, false, false);
+                Shapes.hardenOutline(lastBlock);
 
                 shiftBlocksDown();
                 nextBlock(newSize);
-            } else if (lastBlockPositions.getLeft() > edgesOfStack.getLeft()) {
-                Pointf newPosition = lastBlock.getBound(Boundary.TopLeft);
+                user.addToScore(Math.round(100f * lastBlock.width() / (lastBlockPositions.getRight() - lastBlockPositions.getLeft())));
+            } else if (lastBlockPositions.getLeft() - edgesOfStack.getLeft() > PerfectBlockPrecision) {
                 Pointf newSize = new Pointf(edgesOfStack.getRight() - lastBlock.getBound(Boundary.TopLeft).x, lastBlock.height());
-                Pointf[] newMesh = DrawUtil.createBox(newPosition, newSize);
-                lastBlock.modifyPoints(newMesh, true, false, false);
-                Shapes.removePersonality(lastBlock);
+                Pointf originalTopLeft = lastBlock.getOriginalPoints()[0];
+                Pointf[] newMesh = DrawUtil.createBox(originalTopLeft, newSize);
+                lastBlock.modifyPoints(newMesh, false, false, false);
+                Shapes.hardenOutline(lastBlock);
 
                 shiftBlocksDown();
                 nextBlock(newSize);
+                user.addToScore((int) Math.floor(100f * lastBlock.width() / (lastBlockPositions.getRight() - lastBlockPositions.getLeft())));
             } else {
-                Log.info(MainGame.class, "Perfect?");
-                Shapes.removePersonality(lastBlock);
+                Log.info(MainGame.class, "Perfect!");
+                Shapes.goldenOutline(lastBlock);
 
                 shiftBlocksDown();
                 nextBlock(new Pointf(lastBlock.width(), lastBlock.height()));
+                user.addToScore(300);
             }
 
-            user.addToScore(Math.round(100f * lastBlock.width() / (lastBlockPositions.getRight() - lastBlockPositions.getLeft())));
             scoreBox.setContent("" + user.getScore());
             highScoreBox.setContent("" + user.getHighScore());
             blocksStackedBox.setContent("" + user.getNumberStacked());
