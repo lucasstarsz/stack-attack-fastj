@@ -13,6 +13,7 @@ import tech.fastj.systems.control.SceneManager;
 
 import java.awt.Color;
 
+import tech.fastj.stackattack.scenes.game.MainGame;
 import tech.fastj.stackattack.util.Fonts;
 import tech.fastj.stackattack.util.SceneNames;
 import tech.fastj.stackattack.util.Shapes;
@@ -30,6 +31,7 @@ public class MainMenu extends Scene {
 
     @Override
     public void load(FastJCanvas canvas) {
+        Log.debug(MainGame.class, "loading {}", getSceneName());
         Pointf center = canvas.getCanvasCenter();
 
         titleText = Text2D.create("Stack Attack")
@@ -53,7 +55,7 @@ public class MainMenu extends Scene {
         settingsButton.setFont(Fonts.ButtonTextFont);
         settingsButton.setOnAction(mouseButtonEvent -> {
             mouseButtonEvent.consume();
-            Log.info(MainMenu.class, "TODO: open Settings");
+            FastJEngine.runAfterRender(() -> FastJEngine.<SceneManager>getLogicManager().switchScenes(SceneNames.Settings, false));
         });
 
         exitButton = new Button(this, canvas.getCanvasCenter().add(-100f, 150f), Shapes.ButtonSize);
@@ -64,11 +66,12 @@ public class MainMenu extends Scene {
             mouseButtonEvent.consume();
             FastJEngine.runAfterRender(FastJEngine.getDisplay()::close);
         });
+        Log.debug(MainGame.class, "loaded {}", getSceneName());
     }
 
     @Override
     public void unload(FastJCanvas canvas) {
-
+        Log.debug(MainGame.class, "unloading {}", getSceneName());
         if (titleText != null) {
             titleText.destroy(this);
             titleText = null;
@@ -88,6 +91,8 @@ public class MainMenu extends Scene {
             exitButton.destroy(this);
             exitButton = null;
         }
+        setInitialized(false);
+        Log.debug(MainGame.class, "unloaded {}", getSceneName());
     }
 
     @Override

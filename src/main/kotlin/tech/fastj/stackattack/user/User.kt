@@ -4,6 +4,8 @@ class User {
     var score: Int = 0
         private set
 
+    val settings: UserSettings = UserSettings()
+
     fun addToScore(scoreIncrement: Int) {
         score += scoreIncrement
     }

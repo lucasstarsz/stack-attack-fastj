@@ -24,8 +24,6 @@ public class Shapes {
     public static final BasicStroke ThickEdgedStroke = new BasicStroke(4, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
 
     public static final Pointf ButtonSize = new Pointf(200f, 50f);
-
-    private static final int GroundWidth = 100;
     private static final int GroundHeight = 200;
 
     public static Polygon2D generateBlock(Pointf size) {
@@ -40,18 +38,18 @@ public class Shapes {
                 .build();
     }
 
-    public static Polygon2D generateGround() {
+    public static Polygon2D generateGround(float width) {
         FastJCanvas canvas = FastJEngine.getCanvas();
         Pointf[] mesh = DrawUtil.createBox(
                 Pointf.origin(),
-                new Pointf(GroundWidth, GroundHeight)
+                new Pointf(width, GroundHeight)
         );
 
         return Polygon2D.create(mesh)
                 .withRenderStyle(RenderStyle.FillAndOutline)
                 .withOutline(ThickStroke, Color.green.darker().darker())
                 .withFill(Color.green.darker())
-                .withTransform(canvas.getCanvasCenter().add(-GroundWidth / 2f, 100f), Transform2D.DefaultRotation, Transform2D.DefaultScale)
+                .withTransform(canvas.getCanvasCenter().add(-width / 2f, 100f), Transform2D.DefaultRotation, Transform2D.DefaultScale)
                 .build();
     }
 

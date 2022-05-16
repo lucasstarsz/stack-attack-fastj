@@ -95,11 +95,13 @@ public class MainGame extends Scene {
             base = null;
         }
 
-        for (Polygon2D block : blocks) {
-            block.destroy(this);
+        if (blocks != null) {
+            for (Polygon2D block : blocks) {
+                block.destroy(this);
+            }
+            blocks.clear();
+            blocks = null;
         }
-        blocks.clear();
-        blocks = null;
 
         if (pauseMenu != null) {
             pauseMenu.destroy(this);
@@ -183,9 +185,9 @@ public class MainGame extends Scene {
 
                     blocks = new ArrayList<>();
 
-                    base = Shapes.generateGround();
+                    base = Shapes.generateGround(user.getSettings().getGameStartDifficulty().getValue());
                     drawableManager.addGameObject(base);
-                    nextBlock(new Pointf(100f, 30f));
+                    nextBlock(new Pointf(user.getSettings().getGameStartDifficulty().getValue(), 30f));
 
                     pauseListener = new KeyboardActionListener() {
                         @Override

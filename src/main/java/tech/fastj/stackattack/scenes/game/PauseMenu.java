@@ -28,7 +28,6 @@ public class PauseMenu extends UIElement<MouseActionEvent> {
     private final MainGame origin;
     private Polygon2D backgroundScreen;
     private Text2D pausedText;
-    private Button settingsButton;
     private Button resumeButton;
 
     public PauseMenu(MainGame origin) {
@@ -51,15 +50,6 @@ public class PauseMenu extends UIElement<MouseActionEvent> {
                 .withTransform(Pointf.subtract(center, 100f), Transform2D.DefaultRotation, Transform2D.DefaultScale)
                 .build();
 
-        settingsButton = new Button(origin, backgroundScreen.getCenter().subtract(100f, 0f), Shapes.ButtonSize);
-        settingsButton.setText("Open Settings");
-        settingsButton.setFill(Color.white);
-        settingsButton.setFont(Fonts.ButtonTextFont);
-        settingsButton.setOnAction(mouseButtonEvent -> {
-            mouseButtonEvent.consume();
-            FastJEngine.log("TODO: settings");
-        });
-
         resumeButton = new Button(origin, backgroundScreen.getCenter().add(-100f, 100f), Shapes.ButtonSize);
         resumeButton.setText("Resume Game");
         resumeButton.setFill(Color.white);
@@ -70,7 +60,6 @@ public class PauseMenu extends UIElement<MouseActionEvent> {
         });
 
         origin.drawableManager.addUIElement(this);
-        origin.drawableManager.removeUIElement(settingsButton);
         origin.drawableManager.removeUIElement(resumeButton);
 
         this.origin = origin;
@@ -83,16 +72,10 @@ public class PauseMenu extends UIElement<MouseActionEvent> {
         }
 
         if (shouldBeRendered) {
-            if (settingsButton != null) {
-                origin.inputManager.addMouseActionListener(settingsButton);
-            }
             if (resumeButton != null) {
                 origin.inputManager.addMouseActionListener(resumeButton);
             }
         } else {
-            if (settingsButton != null) {
-                origin.inputManager.removeMouseActionListener(settingsButton);
-            }
             if (resumeButton != null) {
                 origin.inputManager.removeMouseActionListener(resumeButton);
             }
@@ -108,7 +91,6 @@ public class PauseMenu extends UIElement<MouseActionEvent> {
 
         backgroundScreen.render(g);
         pausedText.render(g);
-        settingsButton.render(g);
         resumeButton.render(g);
 
         g.setTransform(oldTransform);
@@ -125,11 +107,6 @@ public class PauseMenu extends UIElement<MouseActionEvent> {
         if (pausedText != null) {
             pausedText.destroy(origin);
             pausedText = null;
-        }
-
-        if (settingsButton != null) {
-            settingsButton.destroy(origin);
-            settingsButton = null;
         }
 
         if (resumeButton != null) {
@@ -149,11 +126,6 @@ public class PauseMenu extends UIElement<MouseActionEvent> {
         if (pausedText != null) {
             pausedText.destroy(origin);
             pausedText = null;
-        }
-
-        if (settingsButton != null) {
-            settingsButton.destroy(origin);
-            settingsButton = null;
         }
 
         if (resumeButton != null) {
