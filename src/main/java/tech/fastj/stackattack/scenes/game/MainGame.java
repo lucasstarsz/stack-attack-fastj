@@ -237,7 +237,7 @@ public class MainGame extends Scene {
                     inputManager.addKeyboardActionListener(pauseListener);
 
                     if (introAnimation != null) {
-                        introAnimation.setPaused(true);
+                        introAnimation.setPaused(false);
                     }
                 }
             }
