@@ -11,6 +11,8 @@ import tech.fastj.input.mouse.MouseActionListener;
 import tech.fastj.input.mouse.events.MouseButtonEvent;
 import tech.fastj.systems.behaviors.Behavior;
 
+import java.awt.event.MouseEvent;
+
 import tech.fastj.stackattack.scenes.game.GameState;
 import tech.fastj.stackattack.scenes.game.MainGame;
 
@@ -77,6 +79,10 @@ public class StackMovement implements Behavior, MouseActionListener {
 
     @Override
     public void onMousePressed(MouseButtonEvent mouseButtonEvent) {
+        if (mouseButtonEvent.getMouseButton() != MouseEvent.BUTTON1) {
+            return;
+        }
+
         if (mouseButtonEvent.isConsumed() || mainGame.getGameState() == GameState.Paused) {
             return;
         }
