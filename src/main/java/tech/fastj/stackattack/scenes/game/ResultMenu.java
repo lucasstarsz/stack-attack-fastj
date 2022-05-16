@@ -20,6 +20,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
 import tech.fastj.stackattack.ui.ContentBox;
+import tech.fastj.stackattack.user.User;
 import tech.fastj.stackattack.util.Fonts;
 import tech.fastj.stackattack.util.Shapes;
 
@@ -28,10 +29,11 @@ public class ResultMenu extends UIElement<MouseActionEvent> {
     private Polygon2D backgroundScreen;
     private Text2D gameEndText;
     private ContentBox scoreBox;
+    private ContentBox blocksStackedBox;
     private Button playAgainButton;
     private Button mainMenuButton;
 
-    public ResultMenu(MainGame origin, int score) {
+    public ResultMenu(MainGame origin, User user) {
         super(origin);
 
         Pointf center = FastJEngine.getCanvas().getCanvasCenter();
@@ -51,9 +53,21 @@ public class ResultMenu extends UIElement<MouseActionEvent> {
                 .withTransform(Pointf.subtract(center, 160f), Transform2D.DefaultRotation, Transform2D.DefaultScale)
                 .build();
 
-        scoreBox = new ContentBox(origin, "Final Score", "" + score);
+        scoreBox = new ContentBox(
+                origin,
+                "Final Score",
+                user.getHasHighScore() ? user.getScore() + " (New Record!)" : user.getScore() + ""
+        );
         scoreBox.getStatDisplay().setFont(Fonts.StatTextFont);
-        scoreBox.translate(Pointf.subtract(center, 65f, 80f));
+        scoreBox.translate(Pointf.subtract(center, 100f, 90f));
+
+        blocksStackedBox = new ContentBox(
+                origin,
+                "Blocks Stacked",
+                user.getHasHighBlocksStacked() ? user.getNumberStacked() + " (New Record!)" : user.getNumberStacked() + ""
+        );
+        blocksStackedBox.getStatDisplay().setFont(Fonts.StatTextFont);
+        blocksStackedBox.translate(Pointf.subtract(center, 100f, 65f));
 
         playAgainButton = new Button(origin, backgroundScreen.getCenter().add(-100f, 100f), Shapes.ButtonSize);
         playAgainButton.setText("Play Again");
@@ -76,6 +90,7 @@ public class ResultMenu extends UIElement<MouseActionEvent> {
         origin.drawableManager.removeUIElement(playAgainButton);
         origin.drawableManager.removeUIElement(mainMenuButton);
         origin.drawableManager.removeUIElement(scoreBox);
+        origin.drawableManager.removeUIElement(blocksStackedBox);
     }
 
     @Override
@@ -86,6 +101,7 @@ public class ResultMenu extends UIElement<MouseActionEvent> {
         backgroundScreen.render(g);
         gameEndText.render(g);
         scoreBox.render(g);
+        blocksStackedBox.render(g);
         playAgainButton.render(g);
         mainMenuButton.render(g);
 
@@ -108,6 +124,11 @@ public class ResultMenu extends UIElement<MouseActionEvent> {
         if (scoreBox != null) {
             scoreBox.destroy(origin);
             scoreBox = null;
+        }
+
+        if (blocksStackedBox != null) {
+            blocksStackedBox.destroy(origin);
+            blocksStackedBox = null;
         }
 
         if (playAgainButton != null) {
@@ -137,6 +158,11 @@ public class ResultMenu extends UIElement<MouseActionEvent> {
         if (scoreBox != null) {
             scoreBox.destroy(origin);
             scoreBox = null;
+        }
+
+        if (blocksStackedBox != null) {
+            blocksStackedBox.destroy(origin);
+            blocksStackedBox = null;
         }
 
         if (playAgainButton != null) {

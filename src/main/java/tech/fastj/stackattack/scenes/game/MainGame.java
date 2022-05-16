@@ -43,6 +43,9 @@ public class MainGame extends Scene {
     private List<Polygon2D> blocks;
     private Polygon2D base;
     private ContentBox scoreBox;
+    private ContentBox highScoreBox;
+    private ContentBox blocksStackedBox;
+    private ContentBox highestBlocksStackedBox;
 
     private PauseMenu pauseMenu;
     private KeyboardActionListener pauseListener;
@@ -88,6 +91,21 @@ public class MainGame extends Scene {
         if (scoreBox != null) {
             scoreBox.destroy(this);
             scoreBox = null;
+        }
+
+        if (highScoreBox != null) {
+            highScoreBox.destroy(this);
+            highScoreBox = null;
+        }
+
+        if (blocksStackedBox != null) {
+            blocksStackedBox.destroy(this);
+            blocksStackedBox = null;
+        }
+
+        if (highestBlocksStackedBox != null) {
+            highestBlocksStackedBox.destroy(this);
+            highestBlocksStackedBox = null;
         }
 
         if (base != null) {
@@ -147,6 +165,15 @@ public class MainGame extends Scene {
                     scoreBox.destroy(this);
                     scoreBox = null;
 
+                    highScoreBox.destroy(this);
+                    scoreBox = null;
+
+                    blocksStackedBox.destroy(this);
+                    scoreBox = null;
+
+                    highestBlocksStackedBox.destroy(this);
+                    scoreBox = null;
+
                     user.resetScore();
                     user = null;
 
@@ -183,35 +210,34 @@ public class MainGame extends Scene {
                     scoreBox.getStatDisplay().setFont(Fonts.MonoStatTextFont);
                     drawableManager.addUIElement(scoreBox);
 
+                    highScoreBox = new ContentBox(this, "High Score", "" + user.getHighScore());
+                    highScoreBox.setTranslation(new Pointf(30f, 50f));
+                    highScoreBox.getStatDisplay().setFont(Fonts.MonoStatTextFont);
+                    drawableManager.addUIElement(highScoreBox);
+
+                    blocksStackedBox = new ContentBox(this, "Blocks Stacked", "" + user.getNumberStacked());
+                    blocksStackedBox.setTranslation(new Pointf(30f, 70f));
+                    blocksStackedBox.getStatDisplay().setFont(Fonts.MonoStatTextFont);
+                    drawableManager.addUIElement(blocksStackedBox);
+
+                    highestBlocksStackedBox = new ContentBox(this, "Highest Number Stacked", "" + user.getHighestNumberStacked());
+                    highestBlocksStackedBox.setTranslation(new Pointf(30f, 90f));
+                    highestBlocksStackedBox.getStatDisplay().setFont(Fonts.MonoStatTextFont);
+                    drawableManager.addUIElement(highestBlocksStackedBox);
+
                     blocks = new ArrayList<>();
 
                     base = Shapes.generateGround(user.getSettings().getGameStartDifficulty().getValue());
                     drawableManager.addGameObject(base);
                     nextBlock(new Pointf(user.getSettings().getGameStartDifficulty().getValue(), 30f));
-
-                    pauseListener = new KeyboardActionListener() {
-                        @Override
-                        public void onKeyReleased(KeyboardStateEvent event) {
-                            if (event.isConsumed() || gameState != GameState.Playing) {
-                                return;
-                            }
-
-                            if (event.getKey() == Keys.P || event.getKey() == Keys.Escape) {
-                                event.consume();
-                                FastJEngine.runAfterUpdate(() -> changeState(GameState.Paused));
-                            }
-                        }
-                    };
-
                 } else if (gameState == GameState.Paused) {
                     pauseMenu.setShouldRender(false);
+                    inputManager.addKeyboardActionListener(pauseListener);
 
                     if (introAnimation != null) {
                         introAnimation.setPaused(true);
                     }
                 }
-
-                inputManager.addKeyboardActionListener(pauseListener);
             }
             case Paused -> {
                 if (pauseMenu == null) {
@@ -226,7 +252,7 @@ public class MainGame extends Scene {
                 pauseMenu.setShouldRender(true);
                 inputManager.removeKeyboardActionListener(pauseListener);
             }
-            case Results -> resultMenu = new ResultMenu(this, user.getScore());
+            case Results -> resultMenu = new ResultMenu(this, user);
         }
         gameState = next;
     }
@@ -265,6 +291,21 @@ public class MainGame extends Scene {
         introFlipObserver = null;
         introAnimation.destroy(this);
         introAnimation = null;
+
+        pauseListener = new KeyboardActionListener() {
+            @Override
+            public void onKeyReleased(KeyboardStateEvent event) {
+                if (event.isConsumed() || gameState != GameState.Playing) {
+                    return;
+                }
+
+                if (event.getKey() == Keys.P || event.getKey() == Keys.Escape) {
+                    event.consume();
+                    FastJEngine.runAfterUpdate(() -> changeState(GameState.Paused));
+                }
+            }
+        };
+        inputManager.addKeyboardActionListener(pauseListener);
     }
 
     public void calculateBlockPoints() {
@@ -313,6 +354,9 @@ public class MainGame extends Scene {
 
             user.addToScore(Math.round(100f * lastBlock.width() / (lastBlockPositions.getRight() - lastBlockPositions.getLeft())));
             scoreBox.setContent("" + user.getScore());
+            highScoreBox.setContent("" + user.getHighScore());
+            blocksStackedBox.setContent("" + user.getNumberStacked());
+            highestBlocksStackedBox.setContent("" + user.getHighestNumberStacked());
         }
     }
 
