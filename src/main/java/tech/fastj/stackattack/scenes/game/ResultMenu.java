@@ -13,6 +13,7 @@ import tech.fastj.graphics.util.DrawUtil;
 
 import tech.fastj.input.mouse.events.MouseActionEvent;
 import tech.fastj.systems.control.Scene;
+import tech.fastj.systems.control.SceneManager;
 import tech.fastj.systems.control.SimpleManager;
 
 import java.awt.Color;
@@ -22,6 +23,7 @@ import java.awt.geom.AffineTransform;
 import tech.fastj.stackattack.ui.ContentBox;
 import tech.fastj.stackattack.user.User;
 import tech.fastj.stackattack.util.Fonts;
+import tech.fastj.stackattack.util.SceneNames;
 import tech.fastj.stackattack.util.Shapes;
 
 public class ResultMenu extends UIElement<MouseActionEvent> {
@@ -32,6 +34,7 @@ public class ResultMenu extends UIElement<MouseActionEvent> {
     private ContentBox blocksStackedBox;
     private Button playAgainButton;
     private Button mainMenuButton;
+    private Button quitGameButton;
 
     public ResultMenu(MainGame origin, User user) {
         super(origin);
@@ -69,7 +72,7 @@ public class ResultMenu extends UIElement<MouseActionEvent> {
         blocksStackedBox.getStatDisplay().setFont(Fonts.StatTextFont);
         blocksStackedBox.translate(Pointf.subtract(center, 100f, 65f));
 
-        playAgainButton = new Button(origin, backgroundScreen.getCenter().add(-100f, 100f), Shapes.ButtonSize);
+        playAgainButton = new Button(origin, backgroundScreen.getCenter().subtract(100f, 0f), Shapes.ButtonSize);
         playAgainButton.setText("Play Again");
         playAgainButton.setFill(Color.white);
         playAgainButton.setFont(Fonts.ButtonTextFont);
@@ -78,17 +81,27 @@ public class ResultMenu extends UIElement<MouseActionEvent> {
             FastJEngine.runAfterRender(() -> origin.changeState(GameState.Intro));
         });
 
-        mainMenuButton = new Button(origin, backgroundScreen.getCenter().subtract(100f, 0f), Shapes.ButtonSize);
-        mainMenuButton.setText("Quit Game");
+        mainMenuButton = new Button(origin, backgroundScreen.getCenter().subtract(100f, -75f), Shapes.ButtonSize);
+        mainMenuButton.setText("Main Menu");
         mainMenuButton.setFill(Color.white);
         mainMenuButton.setFont(Fonts.ButtonTextFont);
         mainMenuButton.setOnAction(mouseButtonEvent -> {
+            mouseButtonEvent.consume();
+            FastJEngine.runAfterRender(() -> FastJEngine.<SceneManager>getLogicManager().switchScenes(SceneNames.MainMenu));
+        });
+
+        quitGameButton = new Button(origin, backgroundScreen.getCenter().subtract(100f, -150f), Shapes.ButtonSize);
+        quitGameButton.setText("Quit Game");
+        quitGameButton.setFill(Color.white);
+        quitGameButton.setFont(Fonts.ButtonTextFont);
+        quitGameButton.setOnAction(mouseButtonEvent -> {
             mouseButtonEvent.consume();
             FastJEngine.runAfterRender(FastJEngine.getDisplay()::close);
         });
 
         origin.drawableManager.removeUIElement(playAgainButton);
         origin.drawableManager.removeUIElement(mainMenuButton);
+        origin.drawableManager.removeUIElement(quitGameButton);
         origin.drawableManager.removeUIElement(scoreBox);
         origin.drawableManager.removeUIElement(blocksStackedBox);
     }
@@ -104,6 +117,7 @@ public class ResultMenu extends UIElement<MouseActionEvent> {
         blocksStackedBox.render(g);
         playAgainButton.render(g);
         mainMenuButton.render(g);
+        quitGameButton.render(g);
 
         g.setTransform(oldTransform);
     }
@@ -140,6 +154,11 @@ public class ResultMenu extends UIElement<MouseActionEvent> {
             mainMenuButton.destroy(origin);
             mainMenuButton = null;
         }
+
+        if (quitGameButton != null) {
+            quitGameButton.destroy(origin);
+            quitGameButton = null;
+        }
     }
 
     @Override
@@ -173,6 +192,11 @@ public class ResultMenu extends UIElement<MouseActionEvent> {
         if (mainMenuButton != null) {
             mainMenuButton.destroy(origin);
             mainMenuButton = null;
+        }
+
+        if (quitGameButton != null) {
+            quitGameButton.destroy(origin);
+            quitGameButton = null;
         }
     }
 }
