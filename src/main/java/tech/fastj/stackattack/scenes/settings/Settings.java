@@ -25,12 +25,12 @@ import tech.fastj.stackattack.util.Shapes;
 public class Settings extends Scene {
 
     private final User user = UserKt.getInstance();
+
+    private Text2D difficultyText;
     private ArrowButton gameDifficulties;
 
     private Text2D titleText;
-    private Button playButton;
-    private Button settingsButton;
-    private Button exitButton;
+    private Button mainMenuButton;
 
     public Settings() {
         super(SceneNames.Settings);
@@ -47,6 +47,12 @@ public class Settings extends Scene {
                 .build();
         drawableManager.addGameObject(titleText);
 
+        difficultyText = Text2D.create("Game Difficulty")
+                .withFont(Fonts.StatTextFont)
+                .withTransform(Pointf.subtract(center, 65f, 30f), Transform2D.DefaultRotation, Transform2D.DefaultScale)
+                .build();
+        drawableManager.addGameObject(difficultyText);
+
         gameDifficulties = new ArrowButton(this, Pointf.subtract(center, 200f, 0f), Shapes.ButtonSize.copy().multiply(2f, 1.25f), GameStartDifficulty.DifficultiesList, 1);
         gameDifficulties.setFill(Color.white);
         gameDifficulties.setFont(Fonts.ButtonTextFont);
@@ -55,29 +61,11 @@ public class Settings extends Scene {
             user.getSettings().setGameStartDifficulty(GameStartDifficulty.values()[gameDifficulties.getSelectedOption()]);
         });
 
-//        playButton = new Button(this, Pointf.subtract(center, 100f, 50f), Shapes.ButtonSize);
-//        playButton.setText("Play Game");
-//        playButton.setFill(Color.white);
-//        playButton.setFont(Fonts.ButtonTextFont);
-//        playButton.setOnAction(mouseButtonEvent -> {
-//            mouseButtonEvent.consume();
-//            FastJEngine.runAfterRender(() -> FastJEngine.<SceneManager>getLogicManager().switchScenes(SceneNames.Game));
-//        });
-//
-//        settingsButton = new Button(this, canvas.getCanvasCenter().add(-100f, 50f), Shapes.ButtonSize);
-//        settingsButton.setText("Settings");
-//        settingsButton.setFill(Color.white);
-//        settingsButton.setFont(Fonts.ButtonTextFont);
-//        settingsButton.setOnAction(mouseButtonEvent -> {
-//            mouseButtonEvent.consume();
-//            FastJEngine.runAfterRender(() -> FastJEngine.<SceneManager>getLogicManager().switchScenes(SceneNames.Settings));
-//        });
-
-        exitButton = new Button(this, canvas.getCanvasCenter().add(-100f, 150f), Shapes.ButtonSize);
-        exitButton.setText("Main Menu");
-        exitButton.setFill(Color.white);
-        exitButton.setFont(Fonts.ButtonTextFont);
-        exitButton.setOnAction(mouseButtonEvent -> {
+        mainMenuButton = new Button(this, canvas.getCanvasCenter().add(-100f, 150f), Shapes.ButtonSize);
+        mainMenuButton.setText("Back");
+        mainMenuButton.setFill(Color.white);
+        mainMenuButton.setFont(Fonts.ButtonTextFont);
+        mainMenuButton.setOnAction(mouseButtonEvent -> {
             mouseButtonEvent.consume();
             FastJEngine.runAfterRender(() -> FastJEngine.<SceneManager>getLogicManager().switchScenes(SceneNames.MainMenu));
         });
@@ -92,24 +80,19 @@ public class Settings extends Scene {
             titleText = null;
         }
 
+        if (difficultyText != null) {
+            difficultyText.destroy(this);
+            difficultyText = null;
+        }
+
         if (gameDifficulties != null) {
             gameDifficulties.destroy(this);
             gameDifficulties = null;
         }
 
-        if (playButton != null) {
-            playButton.destroy(this);
-            playButton = null;
-        }
-
-        if (settingsButton != null) {
-            settingsButton.destroy(this);
-            settingsButton = null;
-        }
-
-        if (exitButton != null) {
-            exitButton.destroy(this);
-            exitButton = null;
+        if (mainMenuButton != null) {
+            mainMenuButton.destroy(this);
+            mainMenuButton = null;
         }
         setInitialized(false);
         Log.debug(MainGame.class, "unloaded {}", getSceneName());
