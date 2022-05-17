@@ -15,6 +15,7 @@ import tech.fastj.systems.control.SceneManager;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import tech.fastj.stackattack.scenes.game.MainGame;
 import tech.fastj.stackattack.util.FilePaths;
@@ -82,6 +83,7 @@ public class MainMenu extends Scene {
             FastJEngine.runAfterRender(FastJEngine.getDisplay()::close);
         });
 
+        System.out.println(Path.of(".").toAbsolutePath());
         mainMenuMusic = FastJEngine.getAudioManager().loadMemoryAudio(FilePaths.MainMenuMusic);
         mainMenuMusic.setLoopPoints(0.2f, MemoryAudio.LoopAtEnd);
         mainMenuMusic.setShouldLoop(true);

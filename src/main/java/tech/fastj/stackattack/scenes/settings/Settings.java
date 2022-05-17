@@ -17,7 +17,6 @@ import tech.fastj.stackattack.scenes.game.GameStartDifficulty;
 import tech.fastj.stackattack.scenes.game.MainGame;
 import tech.fastj.stackattack.ui.ArrowButton;
 import tech.fastj.stackattack.user.User;
-import tech.fastj.stackattack.user.UserKt;
 import tech.fastj.stackattack.util.Colors;
 import tech.fastj.stackattack.util.Fonts;
 import tech.fastj.stackattack.util.SceneNames;
@@ -25,7 +24,7 @@ import tech.fastj.stackattack.util.Shapes;
 
 public class Settings extends Scene {
 
-    private final User user = UserKt.getInstance();
+    private final User user = User.getInstance();
 
     private Text2D difficultyText;
     private ArrowButton gameDifficulties;

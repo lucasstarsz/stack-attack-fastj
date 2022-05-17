@@ -31,7 +31,6 @@ import tech.fastj.stackattack.scenes.mainmenu.MainMenu;
 import tech.fastj.stackattack.scripts.StackMovement;
 import tech.fastj.stackattack.ui.ContentBox;
 import tech.fastj.stackattack.user.User;
-import tech.fastj.stackattack.user.UserKt;
 import tech.fastj.stackattack.util.FilePaths;
 import tech.fastj.stackattack.util.Fonts;
 import tech.fastj.stackattack.util.SceneNames;
@@ -238,7 +237,7 @@ public class MainGame extends Scene {
             }
             case Playing -> {
                 if (gameState == GameState.Intro) {
-                    user = UserKt.getInstance();
+                    user = User.getInstance();
 
                     scoreBox = new ContentBox(this, "Score", "" + user.getScore());
                     scoreBox.setTranslation(new Pointf(30f));

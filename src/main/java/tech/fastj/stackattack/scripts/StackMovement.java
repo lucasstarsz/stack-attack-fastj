@@ -16,7 +16,6 @@ import java.awt.event.MouseEvent;
 import tech.fastj.stackattack.scenes.game.GameState;
 import tech.fastj.stackattack.scenes.game.MainGame;
 import tech.fastj.stackattack.user.User;
-import tech.fastj.stackattack.user.UserKt;
 
 public class StackMovement implements Behavior, MouseActionListener {
 
@@ -35,7 +34,7 @@ public class StackMovement implements Behavior, MouseActionListener {
         this.leftEdge = leftEdge;
         this.rightEdge = rightEdge;
         this.moveDirection = (int) Maths.randomAtEdge(-1, 1);
-        this.user = UserKt.getInstance();
+        this.user = User.getInstance();
     }
 
     public boolean isMoving() {
