@@ -56,6 +56,7 @@ public class MainGame extends Scene {
 
     private PauseMenu pauseMenu;
     private KeyboardActionListener pauseListener;
+    private boolean allowClicks;
 
     private ResultMenu resultMenu;
 
@@ -72,6 +73,10 @@ public class MainGame extends Scene {
         return gameState;
     }
 
+    public boolean isClicksAllowed() {
+        return allowClicks;
+    }
+
     @Override
     public void load(FastJCanvas canvas) {
         Log.debug(MainGame.class, "loading {}", getSceneName());
@@ -84,6 +89,7 @@ public class MainGame extends Scene {
         Log.debug(MainGame.class, "unloading {}", getSceneName());
         gameState = null;
         introFlipObserver = null;
+        allowClicks = false;
 
         if (user != null) {
             user.resetScore();
@@ -201,6 +207,9 @@ public class MainGame extends Scene {
 
                 FastJCanvas canvas = FastJEngine.getCanvas();
 
+                introEnded();
+                allowClicks = false;
+
                 introFlipObserver = new IntroFlipObserver(this);
                 FastJEngine.getGameLoop().addEventObserver(introFlipObserver, AnimationFlipEvent.class);
 
@@ -230,10 +239,11 @@ public class MainGame extends Scene {
                     gameMusic = null;
                 }
                 gameMusic = FastJEngine.getAudioManager().loadMemoryAudio(FilePaths.GameMusic);
-                gameMusic.setLoopPoints(0.37f, MemoryAudio.LoopAtEnd);
+                gameMusic.setLoopPoints(0.375f, 0.941f);
                 gameMusic.setShouldLoop(true);
                 gameMusic.setLoopCount(MemoryAudio.ContinuousLoop);
                 gameMusic.play();
+                SFXPlayer.playSfx(FilePaths.IntroReadySFX);
             }
             case Playing -> {
                 if (gameState == GameState.Intro) {
@@ -326,8 +336,11 @@ public class MainGame extends Scene {
     public void introEnded() {
         FastJEngine.getGameLoop().removeEventObserver(introFlipObserver, AnimationFlipEvent.class);
         introFlipObserver = null;
-        introAnimation.destroy(this);
-        introAnimation = null;
+
+        if (introAnimation != null) {
+            introAnimation.destroy(this);
+            introAnimation = null;
+        }
 
         pauseListener = new KeyboardActionListener() {
             @Override
@@ -343,6 +356,7 @@ public class MainGame extends Scene {
             }
         };
         inputManager.addKeyboardActionListener(pauseListener);
+        allowClicks = true;
     }
 
     public void calculateBlockPoints() {

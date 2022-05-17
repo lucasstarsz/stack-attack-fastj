@@ -65,7 +65,7 @@ public class StackMovement implements Behavior, MouseActionListener {
 
     @Override
     public void update(GameObject gameObject) {
-        if (isMoving && mainGame.getGameState() != GameState.Paused) {
+        if (isMoving && mainGame.getGameState() != GameState.Paused && mainGame.isClicksAllowed()) {
             Pointf movement = new Pointf(moveDirection * MovementSpeed * (float) Math.ceil((user.getNumberStacked() + 1) / 10f) * FastJEngine.getDeltaTime() * 100, 0f);
             gameObject.translate(movement);
 

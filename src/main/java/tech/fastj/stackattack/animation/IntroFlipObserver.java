@@ -16,7 +16,7 @@ public record IntroFlipObserver(MainGame game) implements GameEventObserver<Anim
 
     @Override
     public void eventReceived(AnimationFlipEvent event) {
-        if (event.getOldFrame() == 0 || event.getNewFrame() == 4 || event.getNewFrame() == 8) {
+        if (event.getNewFrame() == 4 || event.getNewFrame() == 8) {
             SFXPlayer.playSfx(FilePaths.IntroReadySFX);
         }
 
