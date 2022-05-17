@@ -26,8 +26,6 @@ public class Shapes {
     public static final Pointf ButtonSize = new Pointf(200f, 50f);
     private static final int GroundHeight = 200;
 
-    private static final Color PerfectGold = new Color(255, 215, 0);
-
     public static Polygon2D generateBlock(Pointf size) {
         FastJCanvas canvas = FastJEngine.getCanvas();
         boolean gradientFill = Maths.randomBoolean();
@@ -60,6 +58,6 @@ public class Shapes {
     }
 
     public static void goldenOutline(Polygon2D block) {
-        block.setOutline(ThickEdgedStroke, PerfectGold);
+        block.setOutline(ThickEdgedStroke, Colors.PerfectGold);
     }
 }

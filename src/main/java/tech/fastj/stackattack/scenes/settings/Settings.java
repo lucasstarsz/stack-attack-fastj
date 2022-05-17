@@ -18,6 +18,7 @@ import tech.fastj.stackattack.scenes.game.MainGame;
 import tech.fastj.stackattack.ui.ArrowButton;
 import tech.fastj.stackattack.user.User;
 import tech.fastj.stackattack.user.UserKt;
+import tech.fastj.stackattack.util.Colors;
 import tech.fastj.stackattack.util.Fonts;
 import tech.fastj.stackattack.util.SceneNames;
 import tech.fastj.stackattack.util.Shapes;
@@ -56,6 +57,8 @@ public class Settings extends Scene {
         gameDifficulties = new ArrowButton(this, Pointf.subtract(center, 200f, 0f), Shapes.ButtonSize.copy().multiply(2f, 1.25f), GameStartDifficulty.DifficultiesList, 1);
         gameDifficulties.setFill(Color.white);
         gameDifficulties.setFont(Fonts.ButtonTextFont);
+        gameDifficulties.getArrowLeft().setFill(Colors.LightSnowy);
+        gameDifficulties.getArrowRight().setFill(Colors.LightSnowy);
         gameDifficulties.setOnAction(mouseButtonEvent -> {
             mouseButtonEvent.consume();
             user.getSettings().setGameStartDifficulty(GameStartDifficulty.values()[gameDifficulties.getSelectedOption()]);

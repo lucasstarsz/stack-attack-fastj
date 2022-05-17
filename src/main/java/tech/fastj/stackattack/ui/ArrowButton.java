@@ -61,7 +61,7 @@ public class ArrowButton extends UIElement<MouseButtonEvent> implements MouseAct
         renderPath = DrawUtil.createPath(buttonCoords);
         super.setCollisionPath(renderPath);
 
-        Pointf arrowPadding = Pointf.multiply(initialSize, 0.1f, 0.3f);
+        Pointf arrowPadding = Pointf.multiply(initialSize, 0.1f, 0.25f);
         Pointf arrowCenter = Pointf.multiply(initialSize, 0.5f);
         float arrowLength = initialSize.y - (arrowPadding.y * 2f);
         float arrowHorizontalLength = (float) Math.sqrt(arrowLength * arrowLength - (arrowLength / 2f) * (arrowLength / 2f));
@@ -138,6 +138,14 @@ public class ArrowButton extends UIElement<MouseButtonEvent> implements MouseAct
 
     public int getSelectedOption() {
         return selectedOption;
+    }
+
+    public Polygon2D getArrowLeft() {
+        return arrowLeft;
+    }
+
+    public Polygon2D getArrowRight() {
+        return arrowRight;
     }
 
     @Override
