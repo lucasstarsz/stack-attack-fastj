@@ -8,12 +8,15 @@ import tech.fastj.graphics.display.FastJCanvas;
 import tech.fastj.graphics.game.Text2D;
 import tech.fastj.graphics.ui.elements.Button;
 
+import tech.fastj.systems.audio.MemoryAudio;
 import tech.fastj.systems.control.Scene;
 import tech.fastj.systems.control.SceneManager;
 
 import java.awt.Color;
+import java.io.IOException;
 
 import tech.fastj.stackattack.scenes.game.MainGame;
+import tech.fastj.stackattack.util.FilePaths;
 import tech.fastj.stackattack.util.Fonts;
 import tech.fastj.stackattack.util.SceneNames;
 import tech.fastj.stackattack.util.Shapes;
@@ -25,6 +28,7 @@ public class MainMenu extends Scene {
     private Button infoButton;
     private Button settingsButton;
     private Button exitButton;
+    private MemoryAudio mainMenuMusic;
 
     public MainMenu() {
         super(SceneNames.MainMenu);
@@ -76,6 +80,13 @@ public class MainMenu extends Scene {
             mouseButtonEvent.consume();
             FastJEngine.runAfterRender(FastJEngine.getDisplay()::close);
         });
+
+        mainMenuMusic = FastJEngine.getAudioManager().loadMemoryAudio(FilePaths.MainMenuMusic);
+        mainMenuMusic.setLoopPoints(0.2f, MemoryAudio.LoopAtEnd);
+        mainMenuMusic.setShouldLoop(true);
+        mainMenuMusic.setLoopCount(MemoryAudio.ContinuousLoop);
+        mainMenuMusic.play();
+
         Log.debug(MainGame.class, "loaded {}", getSceneName());
     }
 
@@ -106,6 +117,17 @@ public class MainMenu extends Scene {
             exitButton.destroy(this);
             exitButton = null;
         }
+
+        if (mainMenuMusic != null) {
+            mainMenuMusic.stop();
+            try {
+                mainMenuMusic.getAudioInputStream().close();
+            } catch (IOException exception) {
+                Log.warn(MainMenu.class, "Error occurred while closing main menu music", exception);
+            }
+            mainMenuMusic = null;
+        }
+
         setInitialized(false);
         Log.debug(MainGame.class, "unloaded {}", getSceneName());
     }

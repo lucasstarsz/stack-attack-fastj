@@ -13,9 +13,12 @@ import tech.fastj.graphics.util.DrawUtil;
 import tech.fastj.input.keyboard.KeyboardActionListener;
 import tech.fastj.input.keyboard.Keys;
 import tech.fastj.input.keyboard.events.KeyboardStateEvent;
+import tech.fastj.systems.audio.AudioEvent;
+import tech.fastj.systems.audio.StreamedAudio;
 import tech.fastj.systems.collections.Pair;
 import tech.fastj.systems.control.Scene;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -339,11 +342,13 @@ public class MainGame extends Scene {
                 Pointf originalTopLeft = new Pointf(Math.abs(edgesOfStack.getLeft() - lastBlock.getTranslation().x), lastBlock.getOriginalPoints()[0].y);
                 settleLastBlock(lastBlock, newSize, originalTopLeft);
                 user.addToScore((int) Math.max(1, Math.floor(100f * lastBlock.width() / (lastBlockPositions.getRight() - lastBlockPositions.getLeft()))));
+                playSfx(FilePaths.BlockSnapSFX);
             } else if (lastBlockPositions.getLeft() - edgesOfStack.getLeft() > PerfectBlockPrecision) {
                 Pointf newSize = new Pointf(edgesOfStack.getRight() - lastBlock.getBound(Boundary.TopLeft).x, lastBlock.height());
                 Pointf originalTopLeft = lastBlock.getOriginalPoints()[0];
                 settleLastBlock(lastBlock, newSize, originalTopLeft);
                 user.addToScore((int) Math.max(1, Math.floor(100f * lastBlock.width() / (lastBlockPositions.getRight() - lastBlockPositions.getLeft()))));
+                playSfx(FilePaths.BlockSnapSFX);
             } else {
                 Log.info(MainGame.class, "Perfect Stack!");
                 Shapes.goldenOutline(lastBlock);
@@ -351,6 +356,7 @@ public class MainGame extends Scene {
                 shiftBlocksDown();
                 nextBlock(new Pointf(lastBlock.width(), lastBlock.height()));
                 user.addToScore(300);
+                playSfx(FilePaths.PerfectBlockSnapSFX);
             }
 
             scoreBox.setContent("" + user.getScore());
@@ -358,6 +364,15 @@ public class MainGame extends Scene {
             blocksStackedBox.setContent("" + user.getNumberStacked());
             highestBlocksStackedBox.setContent("" + user.getHighestNumberStacked());
         }
+    }
+
+    private void playSfx(Path audioPath) {
+        StreamedAudio audio = FastJEngine.getAudioManager().loadStreamedAudio(audioPath);
+        audio.getAudioEventListener().setAudioStopAction(event -> FastJEngine.runAfterRender(() -> {
+            FastJEngine.getGameLoop().removeEventObserver(audio.getAudioEventListener(), AudioEvent.class);
+            FastJEngine.getAudioManager().unloadStreamedAudio(audio.getID());
+        }));
+        audio.play();
     }
 
     private void settleLastBlock(Polygon2D lastBlock, Pointf newSize, Pointf originalTopLeft) {
