@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "tech.fastj"
-version = "0.0.1"
+version = "1.0.0"
 description = "A stacking game made in FastJ."
 
 application.mainClass.set("tech.fastj.stackattack.StackAttack")
