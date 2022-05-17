@@ -22,6 +22,7 @@ public class MainMenu extends Scene {
 
     private Text2D titleText;
     private Button playButton;
+    private Button infoButton;
     private Button settingsButton;
     private Button exitButton;
 
@@ -40,7 +41,7 @@ public class MainMenu extends Scene {
                 .build();
         drawableManager.addGameObject(titleText);
 
-        playButton = new Button(this, Pointf.subtract(center, 100f, 50f), Shapes.ButtonSize);
+        playButton = new Button(this, Pointf.subtract(center, 225f, 50f), Shapes.ButtonSize);
         playButton.setText("Play Game");
         playButton.setFill(Color.white);
         playButton.setFont(Fonts.ButtonTextFont);
@@ -49,7 +50,16 @@ public class MainMenu extends Scene {
             FastJEngine.runAfterRender(() -> FastJEngine.<SceneManager>getLogicManager().switchScenes(SceneNames.Game));
         });
 
-        settingsButton = new Button(this, canvas.getCanvasCenter().add(-100f, 50f), Shapes.ButtonSize);
+        infoButton = new Button(this, Pointf.subtract(center, -25f, 50f), Shapes.ButtonSize);
+        infoButton.setText("Information");
+        infoButton.setFill(Color.white);
+        infoButton.setFont(Fonts.ButtonTextFont);
+        infoButton.setOnAction(mouseButtonEvent -> {
+            mouseButtonEvent.consume();
+            FastJEngine.runAfterRender(() -> FastJEngine.<SceneManager>getLogicManager().switchScenes(SceneNames.Information, false));
+        });
+
+        settingsButton = new Button(this, Pointf.subtract(center, 225f, -50f), Shapes.ButtonSize);
         settingsButton.setText("Settings");
         settingsButton.setFill(Color.white);
         settingsButton.setFont(Fonts.ButtonTextFont);
@@ -58,8 +68,8 @@ public class MainMenu extends Scene {
             FastJEngine.runAfterRender(() -> FastJEngine.<SceneManager>getLogicManager().switchScenes(SceneNames.Settings, false));
         });
 
-        exitButton = new Button(this, canvas.getCanvasCenter().add(-100f, 150f), Shapes.ButtonSize);
-        exitButton.setText("Exit Game");
+        exitButton = new Button(this, Pointf.subtract(center, -25f, -50f), Shapes.ButtonSize);
+        exitButton.setText("Quit Game");
         exitButton.setFill(Color.white);
         exitButton.setFont(Fonts.ButtonTextFont);
         exitButton.setOnAction(mouseButtonEvent -> {
@@ -80,6 +90,11 @@ public class MainMenu extends Scene {
         if (playButton != null) {
             playButton.destroy(this);
             playButton = null;
+        }
+
+        if (infoButton != null) {
+            infoButton.destroy(this);
+            infoButton = null;
         }
 
         if (settingsButton != null) {

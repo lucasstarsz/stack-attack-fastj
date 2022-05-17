@@ -17,6 +17,7 @@ public class Fonts {
     public static final Font StatTextFont = Fonts.notoSans(Font.BOLD, 16);
     public static final Font SmallStatTextFont = Fonts.notoSans(Font.BOLD, 12);
     public static final Font TitleTextFont = Fonts.notoSans(Font.BOLD, 48);
+    public static final Font SubtitleTextFont = Fonts.notoSans(Font.BOLD, 36);
     public static final Font MonoStatTextFont = Fonts.notoSansMono(Font.PLAIN, 16);
 
     public static Font notoSans(int style, int size) {
