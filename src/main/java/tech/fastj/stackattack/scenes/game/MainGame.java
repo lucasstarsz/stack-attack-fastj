@@ -208,6 +208,7 @@ public class MainGame extends Scene {
                 FastJCanvas canvas = FastJEngine.getCanvas();
 
                 introEnded();
+                SFXPlayer.playSfx(FilePaths.IntroReadySFX);
                 allowClicks = false;
 
                 introFlipObserver = new IntroFlipObserver(this);
@@ -243,7 +244,6 @@ public class MainGame extends Scene {
                 gameMusic.setShouldLoop(true);
                 gameMusic.setLoopCount(MemoryAudio.ContinuousLoop);
                 gameMusic.play();
-                SFXPlayer.playSfx(FilePaths.IntroReadySFX);
             }
             case Playing -> {
                 if (gameState == GameState.Intro) {
