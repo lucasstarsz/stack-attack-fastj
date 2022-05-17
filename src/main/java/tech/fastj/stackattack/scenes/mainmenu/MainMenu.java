@@ -8,6 +8,7 @@ import tech.fastj.graphics.display.FastJCanvas;
 import tech.fastj.graphics.game.Text2D;
 import tech.fastj.graphics.ui.elements.Button;
 
+import tech.fastj.systems.audio.AudioEvent;
 import tech.fastj.systems.audio.MemoryAudio;
 import tech.fastj.systems.control.Scene;
 import tech.fastj.systems.control.SceneManager;
@@ -119,6 +120,7 @@ public class MainMenu extends Scene {
         }
 
         if (mainMenuMusic != null) {
+            FastJEngine.getGameLoop().removeEventObserver(mainMenuMusic.getAudioEventListener(), AudioEvent.class);
             mainMenuMusic.stop();
             try {
                 mainMenuMusic.getAudioInputStream().close();

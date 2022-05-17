@@ -16,8 +16,12 @@ public class FilePaths {
 
     public static final Path IntroAnimation = pathResource("/img/stackattack_intro_small.png", "jar");
     public static final Path MainMenuMusic = pathResource("/audio/Stack_Attack_Is_Back.wav", "jar");
+    public static final Path GameMusic = pathResource("/audio/Snapalong.wav", "jar");
+    public static final Path IntroReadySFX = pathResource("/audio/Intro_Ready.wav", "jar");
+    public static final Path BeginGameSFX = pathResource("/audio/Begin_Game.wav", "jar");
     public static final Path BlockSnapSFX = pathResource("/audio/Block_Snap.wav", "jar");
     public static final Path PerfectBlockSnapSFX = pathResource("/audio/Block_Snap_Perfect.wav", "jar");
+    public static final Path LoseSFX = pathResource("/audio/Lose_Game.wav", "jar");
 
     public static final InputStream NotoSansRegular = streamResource("/notosans/NotoSans-Regular.ttf");
     public static final InputStream NotoSansBold = streamResource("/notosans/NotoSans-Bold.ttf");
