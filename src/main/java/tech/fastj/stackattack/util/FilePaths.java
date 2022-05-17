@@ -21,6 +21,7 @@ public class FilePaths {
     public static final Path BeginGameSFX = pathResource("/audio/Begin_Game.wav", "jar");
     public static final Path BlockSnapSFX = pathResource("/audio/Block_Snap.wav", "jar");
     public static final Path PerfectBlockSnapSFX = pathResource("/audio/Block_Snap_Perfect.wav", "jar");
+    public static final Path FasterBlocksSFX = pathResource("/audio/Increase_Block_Speed.wav", "jar");
     public static final Path LoseSFX = pathResource("/audio/Lose_Game.wav", "jar");
 
     public static final InputStream NotoSansRegular = streamResource("/notosans/NotoSans-Regular.ttf");

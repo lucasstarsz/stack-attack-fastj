@@ -15,12 +15,10 @@ import tech.fastj.input.keyboard.Keys;
 import tech.fastj.input.keyboard.events.KeyboardStateEvent;
 import tech.fastj.systems.audio.AudioEvent;
 import tech.fastj.systems.audio.MemoryAudio;
-import tech.fastj.systems.audio.StreamedAudio;
 import tech.fastj.systems.collections.Pair;
 import tech.fastj.systems.control.Scene;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -366,6 +364,7 @@ public class MainGame extends Scene {
             Log.debug(MainGame.class, "You lose");
             FastJEngine.runAfterUpdate(() -> changeState(GameState.Results));
         } else {
+            int blockDifficulty = (int) Math.ceil((user.getNumberStacked() + 1) / 10f);
             Log.debug(
                     MainGame.class,
                     "Left: {}, Right: {}",
@@ -398,6 +397,9 @@ public class MainGame extends Scene {
             highScoreBox.setContent("" + user.getHighScore());
             blocksStackedBox.setContent("" + user.getNumberStacked());
             highestBlocksStackedBox.setContent("" + user.getHighestNumberStacked());
+            if (blockDifficulty < (int) Math.ceil((user.getNumberStacked() + 1) / 10f)) {
+                SFXPlayer.playSfx(FilePaths.FasterBlocksSFX);
+            }
         }
     }
 

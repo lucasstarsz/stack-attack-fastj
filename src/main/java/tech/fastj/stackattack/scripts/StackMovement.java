@@ -15,15 +15,18 @@ import java.awt.event.MouseEvent;
 
 import tech.fastj.stackattack.scenes.game.GameState;
 import tech.fastj.stackattack.scenes.game.MainGame;
+import tech.fastj.stackattack.user.User;
+import tech.fastj.stackattack.user.UserKt;
 
 public class StackMovement implements Behavior, MouseActionListener {
 
-    private static final int MovementSpeed = 5;
+    private static final int MovementSpeed = 4;
 
     private final MainGame mainGame;
     private final int moveDirection;
     private final float leftEdge;
     private final float rightEdge;
+    private final User user;
 
     private boolean isMoving;
 
@@ -32,6 +35,7 @@ public class StackMovement implements Behavior, MouseActionListener {
         this.leftEdge = leftEdge;
         this.rightEdge = rightEdge;
         this.moveDirection = (int) Maths.randomAtEdge(-1, 1);
+        this.user = UserKt.getInstance();
     }
 
     public boolean isMoving() {
@@ -63,7 +67,7 @@ public class StackMovement implements Behavior, MouseActionListener {
     @Override
     public void update(GameObject gameObject) {
         if (isMoving && mainGame.getGameState() != GameState.Paused) {
-            Pointf movement = new Pointf(moveDirection * MovementSpeed * FastJEngine.getDeltaTime() * 100, 0f);
+            Pointf movement = new Pointf(moveDirection * MovementSpeed * (float) Math.ceil((user.getNumberStacked() + 1) / 10f) * FastJEngine.getDeltaTime() * 100, 0f);
             gameObject.translate(movement);
 
             if (moveDirection == -1 && gameObject.getBound(Boundary.TopRight).x < leftEdge
