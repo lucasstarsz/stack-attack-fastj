@@ -2,6 +2,11 @@
 
 A block-stacking game made using [the FastJ Game Engine](https://github.com/fastjengine/FastJ).
 
+## Links
+
+- Game on [itch.io](https://lucas-z.itch.io/stack-attack)
+- Soundtrack on [Soundcloud](https://soundcloud.com/lucas-z-43717769/sets/stack-attack)
+
 ## Controls
 
 - Use your Left Mouse Button to stop the moving block.
